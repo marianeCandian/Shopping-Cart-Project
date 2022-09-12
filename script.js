@@ -2,7 +2,6 @@
 // experimente passar o mouse sobre o nome das funções e verá que elas possuem descrições! 
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
-
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -72,6 +71,14 @@ const createCartItemElement = ({ id, title, price }) => {
   return li;
 };
 
-window.onload = () => { 
-  fetchProducts('computador');
+window.onload = async () => {
+  const products = await fetchProducts('computador');
+  const items = document.getElementsByClassName('items');
+  // console.log(products);
+  products.results.forEach((produto) => { 
+    items[0].appendChild(createProductItemElement(produto));
+  });
+  // criar um laço de repetição para percorrer cada produto (forech);
+  // dentro do forcth, vou utilizar a função createProductItemElement;
+  // Preciso anexar o resultado em uma div na tela.
 };
