@@ -88,7 +88,6 @@ const printCarts = async () => {
     element.addEventListener('click', addCart);
     items.appendChild(element);
   });
-  saveCartItems(element);
 };
 
 window.onload = async () => {
