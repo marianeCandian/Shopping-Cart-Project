@@ -53,7 +53,7 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @param {Element} product - Elemento do produto.
  * @returns {string} ID do produto.
  */
-const getIdFromProductItem = (product) => product.querySelector('span.item_id').innerText;
+// const getIdFromProductItem = (product) => product.querySelector('span.item_id').innerText;
 
 /**
  * Função responsável por criar e retornar um item do carrinho.
@@ -63,13 +63,44 @@ const getIdFromProductItem = (product) => product.querySelector('span.item_id').
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
+
+const sumItems = () => {
+  const totalprice = document.querySelector('.total-price');
+  const evryCart = document.querySelectorAll('.cart__item');
+  let result = 0;
+  evryCart.forEach((item) => {
+    const numero = Number(item.innerText.split('$')[1]);
+    result += numero;
+  });
+  totalprice.innerHTML = `R$ ${result.toFixed(2)}`;
+};
+
+const cart = document.querySelector('.cart__items');
+
+const cartItemClickListener = (event) => {
+  event.target.remove();
+  saveCartItems(cart.innerHTML);
+  sumItems();
+};
+
+const limpaCart = () => {
+  cart.innerHTML = '';
+  localStorage.clear();
+  const totalprice = document.querySelector('.total-price');
+  totalprice.innerHTML = '';
+};
+
+const eventoLimpar = () => {
+  const btnEmpty = document.querySelector('.empty-cart');
+  btnEmpty.addEventListener('click', limpaCart);
+};
+
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', (e) => {
-    e.target.remove();
-  });
+  li.addEventListener('click', cartItemClickListener);
+  sumItems();
   return li;
 };
 
@@ -77,9 +108,8 @@ const addCart = async (event) => {
   const id = event.target.parentNode.firstChild.innerText;
   const obj = await fetchItem(id);
   const elements = createCartItemElement(obj);
-  const cartItems = document.querySelector('.cart__items');
-  cartItems.appendChild(elements);
-  saveCartItems(cartItems.innerHTML);
+  cart.appendChild(elements);
+  saveCartItems(cart.innerHTML);
 };
 
 const items = document.querySelector('.items');
@@ -93,19 +123,30 @@ const printCarts = async () => {
 });
 };
 
-window.onload = async () => {
-  await printCarts();
-  const produtos = getSavedCartItems();
-  const getOl = document.querySelector('.cart__items');
-  getOl.innerHTML = produtos;
-  getOl.forEach((element) => {
-    element.addEventListener('click', addCart);
-  });
+const loading = () => {
+  const item = document.querySelector('.items');
+  const span = document.createElement('span');
+  span.innerText = 'carregando...';
+  span.className = 'loading';
+  item.appendChild(span);
 };
 
-// fazer um queryselectorAll para pegar todas li novamente 
-// depois, utilizando um laço de repetição(foreach com remove), para recriar os eventos, devo percorrer cada uma das li, e reatribuir o mesmo evento(função);
-// o localStorage não sabe o que ele tem.. tem que pegar os elementos um por vez e ratribuir os eventos.
-// 
+const removeLoading = () => {
+  const span = document.querySelector('.loading');
+  span.remove();
+};
 
-// ao esvaziar o carrinho tb tem que chamar o saveCartItems alem de esvazior o valor
+window.onload = async () => {
+  loading();
+  await printCarts();
+  const produtos = getSavedCartItems('cartItems');
+  const getOl = document.querySelector('.cart__items');
+  getOl.innerHTML = produtos;
+  const retorna = document.querySelectorAll('.cart__item');
+  retorna.forEach((element) => {
+    element.addEventListener('click', createCartItemElement);
+  });
+  removeLoading();
+  eventoLimpar();
+  sumItems();
+};
