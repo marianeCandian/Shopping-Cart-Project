@@ -144,7 +144,7 @@ window.onload = async () => {
   getOl.innerHTML = produtos;
   const retorna = document.querySelectorAll('.cart__item');
   retorna.forEach((element) => {
-    element.addEventListener('click', createCartItemElement);
+    element.addEventListener('click', cartItemClickListener);
   });
   removeLoading();
   eventoLimpar();
