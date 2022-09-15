@@ -67,7 +67,9 @@ const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', (e) => e.target.remove());
+  li.addEventListener('click', (e) => {
+    e.target.remove();
+  });
   return li;
 };
 
@@ -77,6 +79,7 @@ const addCart = async (event) => {
   const elements = createCartItemElement(obj);
   const cartItems = document.querySelector('.cart__items');
   cartItems.appendChild(elements);
+  saveCartItems(cartItems.innerHTML);
 };
 
 const items = document.querySelector('.items');
@@ -85,11 +88,24 @@ const printCarts = async () => {
   const products = await fetchProducts('computador');
   products.results.forEach((produto) => {
     const element = createProductItemElement(produto);
+    items.appendChild(element);  
     element.addEventListener('click', addCart);
-    items.appendChild(element);
-  });
+});
 };
 
 window.onload = async () => {
   await printCarts();
+  const produtos = getSavedCartItems();
+  const getOl = document.querySelector('.cart__items');
+  getOl.innerHTML = produtos;
+  getOl.forEach((element) => {
+    element.addEventListener('click', addCart);
+  });
 };
+
+// fazer um queryselectorAll para pegar todas li novamente 
+// depois, utilizando um laço de repetição(foreach com remove), para recriar os eventos, devo percorrer cada uma das li, e reatribuir o mesmo evento(função);
+// o localStorage não sabe o que ele tem.. tem que pegar os elementos um por vez e ratribuir os eventos.
+// 
+
+// ao esvaziar o carrinho tb tem que chamar o saveCartItems alem de esvazior o valor
