@@ -69,10 +69,10 @@ const sumItems = () => {
   const evryCart = document.querySelectorAll('.cart__item');
   let result = 0;
   evryCart.forEach((item) => {
-    const numero = Number(item.innerText.split('$')[1]);
-    result += numero;
+    const numero = item.innerText.split('$')[1];
+    result += parseFloat(numero);
   });
-  totalprice.innerHTML = `R$ ${result.toFixed(2)}`;
+  totalprice.innerHTML = result;
 };
 
 const cart = document.querySelector('.cart__items');
@@ -110,6 +110,7 @@ const addCart = async (event) => {
   const elements = createCartItemElement(obj);
   cart.appendChild(elements);
   saveCartItems(cart.innerHTML);
+  sumItems();
 };
 
 const items = document.querySelector('.items');
@@ -146,7 +147,7 @@ window.onload = async () => {
   retorna.forEach((element) => {
     element.addEventListener('click', cartItemClickListener);
   });
+  sumItems();
   removeLoading();
   eventoLimpar();
-  sumItems();
 };
